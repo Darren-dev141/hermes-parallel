@@ -1,0 +1,13 @@
+name: receipts
+version: "0.1.0"
+description: >-
+  Local hashed observations of Hermes tool calls and session-end events,
+  plus a verify tool and /receipts. A receipt shows what was recorded.
+  It does not prove that a task succeeded.
+license: MIT
+requires_hermes: ">=0.23.0"
+provides_tools:
+  - receipts_verify
+provides_hooks:
+  - post_tool_call
+  - on_session_end

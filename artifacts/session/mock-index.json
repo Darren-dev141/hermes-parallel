@@ -1,0 +1,316 @@
+[
+  {
+    "path": "/v1/chat/completions",
+    "stream": true,
+    "roles": [
+      {
+        "role": "system",
+        "tool": null
+      },
+      {
+        "role": "user",
+        "tool": null
+      }
+    ]
+  },
+  {
+    "path": "/v1/chat/completions",
+    "stream": true,
+    "roles": [
+      {
+        "role": "system",
+        "tool": null
+      },
+      {
+        "role": "user",
+        "tool": null
+      },
+      {
+        "role": "assistant",
+        "tool": "terminal"
+      },
+      {
+        "role": "tool",
+        "tool": null,
+        "tool_result": "{\"output\": \"receipts-zero\", \"exit_code\": 0, \"error\": null}"
+      }
+    ]
+  },
+  {
+    "path": "/v1/chat/completions",
+    "stream": true,
+    "roles": [
+      {
+        "role": "system",
+        "tool": null
+      },
+      {
+        "role": "user",
+        "tool": null
+      },
+      {
+        "role": "assistant",
+        "tool": "terminal"
+      },
+      {
+        "role": "tool",
+        "tool": null,
+        "tool_result": "{\"output\": \"receipts-zero\", \"exit_code\": 0, \"error\": null}"
+      },
+      {
+        "role": "assistant",
+        "tool": "terminal"
+      },
+      {
+        "role": "tool",
+        "tool": null,
+        "tool_result": "{\"output\": \"receipts-nonzero\", \"exit_code\": 3, \"error\": null}"
+      }
+    ]
+  },
+  {
+    "path": "/v1/chat/completions",
+    "stream": true,
+    "roles": [
+      {
+        "role": "system",
+        "tool": null
+      },
+      {
+        "role": "user",
+        "tool": null
+      },
+      {
+        "role": "assistant",
+        "tool": "terminal"
+      },
+      {
+        "role": "tool",
+        "tool": null,
+        "tool_result": "{\"output\": \"receipts-zero\", \"exit_code\": 0, \"error\": null}"
+      },
+      {
+        "role": "assistant",
+        "tool": "terminal"
+      },
+      {
+        "role": "tool",
+        "tool": null,
+        "tool_result": "{\"output\": \"receipts-nonzero\", \"exit_code\": 3, \"error\": null}"
+      },
+      {
+        "role": "assistant",
+        "tool": "receipts_verify"
+      },
+      {
+        "role": "tool",
+        "tool": null
+      }
+    ]
+  },
+  {
+    "path": "/v1/chat/completions",
+    "stream": true,
+    "roles": [
+      {
+        "role": "system",
+        "tool": null
+      },
+      {
+        "role": "user",
+        "tool": null
+      },
+      {
+        "role": "assistant",
+        "tool": "terminal"
+      },
+      {
+        "role": "tool",
+        "tool": null,
+        "tool_result": "{\"output\": \"receipts-zero\", \"exit_code\": 0, \"error\": null}"
+      },
+      {
+        "role": "assistant",
+        "tool": "terminal"
+      },
+      {
+        "role": "tool",
+        "tool": null,
+        "tool_result": "{\"output\": \"receipts-nonzero\", \"exit_code\": 3, \"error\": null}"
+      },
+      {
+        "role": "assistant",
+        "tool": "receipts_verify"
+      },
+      {
+        "role": "tool",
+        "tool": null
+      },
+      {
+        "role": "assistant",
+        "tool": "receipts_verify"
+      },
+      {
+        "role": "tool",
+        "tool": null
+      }
+    ]
+  },
+  {
+    "path": "/v1/chat/completions",
+    "stream": true,
+    "roles": [
+      {
+        "role": "system",
+        "tool": null
+      },
+      {
+        "role": "user",
+        "tool": null
+      }
+    ]
+  },
+  {
+    "path": "/v1/chat/completions",
+    "stream": true,
+    "roles": [
+      {
+        "role": "system",
+        "tool": null
+      },
+      {
+        "role": "user",
+        "tool": null
+      },
+      {
+        "role": "assistant",
+        "tool": "terminal"
+      },
+      {
+        "role": "tool",
+        "tool": null,
+        "tool_result": "{\"output\": \"receipts-zero\", \"exit_code\": 0, \"error\": null}"
+      }
+    ]
+  },
+  {
+    "path": "/v1/chat/completions",
+    "stream": true,
+    "roles": [
+      {
+        "role": "system",
+        "tool": null
+      },
+      {
+        "role": "user",
+        "tool": null
+      },
+      {
+        "role": "assistant",
+        "tool": "terminal"
+      },
+      {
+        "role": "tool",
+        "tool": null,
+        "tool_result": "{\"output\": \"receipts-zero\", \"exit_code\": 0, \"error\": null}"
+      },
+      {
+        "role": "assistant",
+        "tool": "terminal"
+      },
+      {
+        "role": "tool",
+        "tool": null,
+        "tool_result": "{\"output\": \"receipts-nonzero\", \"exit_code\": 3, \"error\": null}"
+      }
+    ]
+  },
+  {
+    "path": "/v1/chat/completions",
+    "stream": true,
+    "roles": [
+      {
+        "role": "system",
+        "tool": null
+      },
+      {
+        "role": "user",
+        "tool": null
+      },
+      {
+        "role": "assistant",
+        "tool": "terminal"
+      },
+      {
+        "role": "tool",
+        "tool": null,
+        "tool_result": "{\"output\": \"receipts-zero\", \"exit_code\": 0, \"error\": null}"
+      },
+      {
+        "role": "assistant",
+        "tool": "terminal"
+      },
+      {
+        "role": "tool",
+        "tool": null,
+        "tool_result": "{\"output\": \"receipts-nonzero\", \"exit_code\": 3, \"error\": null}"
+      },
+      {
+        "role": "assistant",
+        "tool": "receipts_verify"
+      },
+      {
+        "role": "tool",
+        "tool": null
+      }
+    ]
+  },
+  {
+    "path": "/v1/chat/completions",
+    "stream": true,
+    "roles": [
+      {
+        "role": "system",
+        "tool": null
+      },
+      {
+        "role": "user",
+        "tool": null
+      },
+      {
+        "role": "assistant",
+        "tool": "terminal"
+      },
+      {
+        "role": "tool",
+        "tool": null,
+        "tool_result": "{\"output\": \"receipts-zero\", \"exit_code\": 0, \"error\": null}"
+      },
+      {
+        "role": "assistant",
+        "tool": "terminal"
+      },
+      {
+        "role": "tool",
+        "tool": null,
+        "tool_result": "{\"output\": \"receipts-nonzero\", \"exit_code\": 3, \"error\": null}"
+      },
+      {
+        "role": "assistant",
+        "tool": "receipts_verify"
+      },
+      {
+        "role": "tool",
+        "tool": null
+      },
+      {
+        "role": "assistant",
+        "tool": "receipts_verify"
+      },
+      {
+        "role": "tool",
+        "tool": null
+      }
+    ]
+  }
+]

@@ -1,0 +1,33 @@
+exit=0
+--- stdout ---
+receipts session=local-f9eed6fc7b71a610fb3bb35ff2530992c02487c985917db706c8a0b04ea3f935
+proves_task_success: false
+chain: intact
+checkpoint: none (deleting the tail or replacing the file is not detectable)
+Without a checkpoint digest kept outside this ledger, deleting the tail or replacing the file still verifies as intact.
+session_records: 5
+- id=251dabc1719247959355dd68f12a02b6 kind=tool_call tool=terminal claim=execution_observed status=ok exit=0
+  observed_at=2026-11-08T01:47:41.918Z
+  input_sha256=87e99a80ed67c60c32c33a4e6ab5e5d29876dc1e37fa44b953c0bcf0d77faefb
+  output_sha256=568e1515926e33bc6d03275eb16bac483bc37a3a5bb95ceb4ec12480e4ba805c
+- id=d0738e6d7b244226a135aba36362fa46 kind=tool_call tool=terminal claim=failed status=error exit=3
+  observed_at=2026-11-08T01:47:41.990Z
+  input_sha256=311ea153a8fb5ee5bf6b1c4cf446c09ac6be5a5505bf81f2bc51d865e2ba8b64
+  output_sha256=160a4f89f10810aef6450048bdb60bb3a37db879980b0d83edd560d0c6e80dd8
+- id=bf3abdb9f69444bb9d63b9bfaa99864b kind=tool_call tool=receipts_verify claim=execution_observed status=ok exit=unknown
+  observed_at=2026-11-08T01:47:42.012Z
+  input_sha256=555f9b95046891081c37e047f714163b26715dd2533ab54c4f382ad4f0cf9718
+  output_sha256=24e40ea8ea74c5f559d1a46f7e117b158fabf33c4ebe3f6a1f0509d24f260a14
+- id=52cdc22186e34890bc2821fafbbf0490 kind=tool_call tool=receipts_verify claim=execution_observed status=ok exit=unknown
+  observed_at=2026-11-08T01:47:42.030Z
+  input_sha256=4f71b40e74b75df733a0c49f8fb52fcce83e61f4bfd20eda40860b6ac7b193d4
+  output_sha256=00abd375f5801256d850f3c9b2d638ab3e7e08a2c9c656b1e23fa1facb2e305b
+- id=200b29812e0e49a897bbedaf2c724970 kind=session_end tool=None claim=session_end_observed status=unknown exit=unknown
+  observed_at=2026-11-08T01:47:42.046Z
+  input_sha256=None
+  output_sha256=None
+  lifecycle completed=true interrupted=false lifecycle_failed=false turn_exit_reason=text_response(finish_reason=stop) (lifecycle flags are not proof the task succeeded)
+
+
+--- stderr ---
+

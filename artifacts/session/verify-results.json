@@ -1,0 +1,68 @@
+[
+  {
+    "chain": {
+      "broken_at": null,
+      "detail": "ok",
+      "records": 2,
+      "status": "intact",
+      "tip": "626ab2995f434bcb3afde7e0c2d4be3cbe44aa1494607949f1f03439958e8876"
+    },
+    "checkpoint": {
+      "matches_tip": null,
+      "supplied": false
+    },
+    "independent_attestation": false,
+    "limit": "Without a checkpoint digest kept outside this ledger, deleting the tail or replacing the file still verifies as intact.",
+    "proves_task_success": false,
+    "record": {
+      "claim": "execution_observed",
+      "claim_rederived_ok": true,
+      "digest_ok": true,
+      "exit_code_known": true,
+      "found": true,
+      "id": "51ebe9645443445cae3ff011dadbb054",
+      "in_session": true,
+      "input_match": true,
+      "invalid_id": false,
+      "output_match": true,
+      "reported_exit_code": 0,
+      "reported_status": "ok",
+      "signal_consistent": true
+    },
+    "schema": "hermes.receipts.verify.v1",
+    "tail_deletion_detectable": false
+  },
+  {
+    "chain": {
+      "broken_at": null,
+      "detail": "ok",
+      "records": 3,
+      "status": "intact",
+      "tip": "298c67f07ec2b24aef8061cde2caad05907aeddb35afaf22dd800204e63c42a1"
+    },
+    "checkpoint": {
+      "matches_tip": null,
+      "supplied": false
+    },
+    "independent_attestation": false,
+    "limit": "Without a checkpoint digest kept outside this ledger, deleting the tail or replacing the file still verifies as intact.",
+    "proves_task_success": false,
+    "record": {
+      "claim": "execution_observed",
+      "claim_rederived_ok": true,
+      "digest_ok": true,
+      "exit_code_known": true,
+      "found": true,
+      "id": "51ebe9645443445cae3ff011dadbb054",
+      "in_session": true,
+      "input_match": null,
+      "invalid_id": false,
+      "output_match": false,
+      "reported_exit_code": 0,
+      "reported_status": "ok",
+      "signal_consistent": true
+    },
+    "schema": "hermes.receipts.verify.v1",
+    "tail_deletion_detectable": false
+  }
+]

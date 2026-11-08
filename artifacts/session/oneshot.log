@@ -1,0 +1,7 @@
+$ /tmp/hermes-src/.venv/bin/hermes -z Run the receipts smoke. Call the terminal tool when asked. Do not claim the task succeeded.
+exit=0
+--- stdout ---
+mock-session-finished. This text is the mock, not evidence.
+
+--- stderr ---
+
