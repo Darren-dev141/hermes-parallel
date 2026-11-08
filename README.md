@@ -1,8 +1,12 @@
-# Receipts
+# Receipts and Hermes Parallel
 
-A Hermes Agent plugin that writes a local, hash-chained ledger of tool calls and turn-end observations, then checks that ledger for tampering.
+Two Hermes plugins.
 
-A receipt shows what Hermes recorded. It does not prove that a task succeeded.
+**Receipts** writes a local, hash-chained ledger of tool calls and turn-end observations. A receipt shows what Hermes recorded. It does not prove that a task succeeded.
+
+**Hermes Parallel** (`hermes-parallel`) is a hackathon slice of auditable fan-out on top of that ledger. `/investigate` runs 2–4 investigations in parallel, records each one with a status and causal dependencies, and anchors the event in the receipts chain. Correcting a bad intermediate value retracts only the conclusions that used it. An order check replays the same evidence in two arrival orders and flags a conclusion that changes only because of timing.
+
+The supplier demo is a scripted integer case, not an open-ended research agent. The investigations are local threads. Hermes v0.23's `delegate_task` can spawn real subagents, and top-level calls do not join those children in the same turn, so this slice does not call it.
 
 Tested against Hermes Agent **v0.23.0** (`2bd378ed1b8d6bf2192cb26e0a55ff3091e6bd19`) on Python 3.14.10. Older releases were not tested. `requires_hermes` is `>=0.23.0` for that reason.
 
@@ -53,10 +57,49 @@ Hooks, and only the events Hermes emits:
 
 The ledger lives in Hermes's profile-scoped plugin data directory (`plugin_data_dir("receipts") / ledger.jsonl`), not in the plugin install tree. It is append-only, locked across threads and processes, and not deleted by this plugin. Deleting or replacing that file is the user's action, and it is also the hole in an unanchored chain.
 
+## Hermes Parallel
+
+Statuses on each evidence item: `proposed`, `computed`, `independently_checked`, `supported`, `unknown`. A later event can mark a node `retracted` when a dependency is corrected. The history keeps both the old conclusion and the new one.
+
+The supplier question "What is the supplier total?" fans out four reads: a quote of 40, a rival quote of 25, a quantity of 10, and a tax of 10 percent. Quantity is checked and matches. The rival check of the quote does not match, but the total is still built on 40, so it is supported at 440. That is the bad number.
+
+`parallel_retract` with `price_quote = 25` then:
+
+- retracts `subtotal` (400) and `total` (440)
+- recomputes them to 250 and 275
+- leaves quantity, tax, and the rival quote untouched
+
+`parallel_order_check` replays quote-first and rival-first. The formula total stays 440. `first_price` flips from 40 to 25 and is flagged order-sensitive.
+
+A question that is not the supplier case is split into two proposed readings and an unknown answer. No number is invented.
+
+Commands, in a session that supplies a session id: `/investigate <question>`, `/parallel report`, `/parallel retract <key> <integer>`, `/parallel order`. The same actions are tools: `parallel_investigate`, `parallel_retract`, `parallel_report`, `parallel_order_check`.
+
+Enable both plugins. Tool Search hides plugin tools unless it is off or the model goes through `tool_call`:
+
+```yaml
+plugins:
+  enabled:
+    - receipts
+    - hermes-parallel
+tools:
+  tool_search:
+    enabled: "off"
+```
+
+```bash
+hermes plugins doctor hermes_parallel --ci
+python3 -m unittest tests.test_receipts tests.test_parallel -v
+python3 scripts/smoke_parallel.py
+```
+
+The mock-model transcript is `artifacts/parallel/`. `on_session_end` still fires on every turn in v0.23.0, not only when a chat session ends.
+
 ## Layout
 
 ```
-receipts/           plugin (plugin.yaml + register)
+receipts/           hash-chain plugin
+hermes_parallel/    fan-out, retraction, order check
   __init__.py       Hermes register(ctx)
   ledger.py         hash chain
   observe.py        hook payload -> receipt body
@@ -65,7 +108,8 @@ receipts/           plugin (plugin.yaml + register)
   schemas.py
 tests/test_receipts.py
 scripts/smoke_session.py
-artifacts/          unit-test log and the mock-model session
+scripts/smoke_parallel.py
+artifacts/          unit-test log, receipts session, retraction demo
 ```
 
 No third-party Python packages. The plugin does not make network calls, spawn shells, start background services, or read credential files.
@@ -76,7 +120,7 @@ No third-party Python packages. The plugin does not make network calls, spawn sh
 python3 -m unittest tests.test_receipts -v
 ```
 
-32 tests. They cover canonical hashes, tampered fields, a recomputed tail that still looks intact until a checkpoint is supplied, corrupt lines, secrets absent from the file, unknown and non-zero exits, session isolation, hostile ids, concurrent appends, and repeated session-end events that do not invent missing flags.
+38 tests. The original 32 cover the receipts chain. `tests/test_parallel.py` covers retraction (dependents move, everyone else stays) and order sensitivity (the formula total does not flip when arrival order flips; the first-arriving price does).
 
 ## Install into Hermes
 
@@ -166,13 +210,17 @@ Evidence from that run: `artifacts/session/ledger.jsonl`, `artifacts/session/ver
 
 ## Before a hackathon entry
 
-Not done, and not started from this tree:
+Not done from this tree: no catalog pull request, no public pin, no X post, no Typeform.
 
-- No catalog pull request, no public repository pin, no X post, no Typeform. Those need a separate go-ahead. The plugin tree to pin, if that decision is made without further code changes, is `e5d84abf09862c44709ba924c0e4adbf2fc00e1c`.
-- `requires_hermes` is the release that was installed and tested, not a search for the oldest release that still loads.
-- There is no external checkpoint store. Passing `checkpoint_digest` works; nothing here copies the tip anywhere trustworthy.
-- Tool Search's default hides the verify tool from the eager list.
-- `on_session_end` is per turn. A demo that says "when the session ends" is describing the wrong event.
+Still stubbed, on purpose:
+
+- Parallel workers are local threads, not `delegate_task` subagents.
+- Only the supplier-total question computes numbers. Other questions stay `unknown`.
+- The order check replays two fixed orders. It does not re-run live threads.
+- There is no budget scheduler, no speculative isolation, and no external checkpoint beyond the receipts chain.
+- Thesis paper citations were not verified and are not repeated here.
+
+Hermes limits hit while building this: `delegate_task` accepts a `tasks` array, and top-level delegation does not return child results in the same turn. `on_session_end` fires at the end of every turn in v0.23.0. Tool Search, left on, omits plugin tools from the eager list, and a direct call then creates no receipt. The retraction demo is `artifacts/parallel/`.
 
 ## License
 

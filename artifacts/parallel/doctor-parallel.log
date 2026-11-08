@@ -1,0 +1,10 @@
+$ /tmp/hermes-src/.venv/bin/hermes plugins doctor /workspace/hermes_parallel --ci
+exit=0
+--- stdout ---
+Plugin Doctor: /workspace/hermes_parallel
+  manifest: hermes-parallel 0.1.0 (standalone)
+  OK: runtime discovery, manifest parsing, import, and registration passed
+  registrations: 4 tool(s), 0 hook(s)
+
+--- stderr ---
+

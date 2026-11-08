@@ -1,37 +1,4 @@
-test_table (tests.test_receipts.ClassifyTest.test_table) ... ok
-test_other_sessions_receipt_is_not_found (tests.test_receipts.CommandAndVerifyTest.test_other_sessions_receipt_is_not_found) ... ok
-test_slash_does_not_accept_a_session_override (tests.test_receipts.CommandAndVerifyTest.test_slash_does_not_accept_a_session_override) ... ok
-test_slash_lists_only_the_calling_session_and_checks_the_chain (tests.test_receipts.CommandAndVerifyTest.test_slash_lists_only_the_calling_session_and_checks_the_chain) ... ok
-test_slash_without_session_fails_closed (tests.test_receipts.CommandAndVerifyTest.test_slash_without_session_fails_closed) ... ok
-test_supplied_digest_mismatch_does_not_rewrite_the_ledger (tests.test_receipts.CommandAndVerifyTest.test_supplied_digest_mismatch_does_not_rewrite_the_ledger) ... ok
-test_verify_lookup_is_session_scoped_and_rejects_paths (tests.test_receipts.CommandAndVerifyTest.test_verify_lookup_is_session_scoped_and_rejects_paths) ... ok
-test_verify_tool_separates_integrity_payload_and_outcome (tests.test_receipts.CommandAndVerifyTest.test_verify_tool_separates_integrity_payload_and_outcome) ... ok
-test_input_hash_is_canonical_utf8_sha256 (tests.test_receipts.HashContractTest.test_input_hash_is_canonical_utf8_sha256) ... ok
-test_input_key_order_does_not_change_hash (tests.test_receipts.HashContractTest.test_input_key_order_does_not_change_hash) ... ok
-test_missing_args_stay_unknown (tests.test_receipts.HashContractTest.test_missing_args_stay_unknown) ... ok
-test_non_string_output_stays_unknown (tests.test_receipts.HashContractTest.test_non_string_output_stays_unknown) ... ok
-test_output_hash_is_the_raw_string_not_reparsed_json (tests.test_receipts.HashContractTest.test_output_hash_is_the_raw_string_not_reparsed_json) ... ok
-test_unserializable_input_stays_unknown (tests.test_receipts.HashContractTest.test_unserializable_input_stays_unknown) ... ok
-test_bool_and_string_exit_codes_stay_unknown (tests.test_receipts.LedgerTest.test_bool_and_string_exit_codes_stay_unknown) ... ok
-test_checkpoint_matches_real_tip (tests.test_receipts.LedgerTest.test_checkpoint_matches_real_tip) ... ok
-test_concurrent_appends_keep_a_single_intact_chain (tests.test_receipts.LedgerTest.test_concurrent_appends_keep_a_single_intact_chain) ... ok
-test_corrupt_line_is_unreadable_and_append_refuses (tests.test_receipts.LedgerTest.test_corrupt_line_is_unreadable_and_append_refuses) ... ok
-test_empty_ledger_verifies (tests.test_receipts.LedgerTest.test_empty_ledger_verifies) ... ok
-test_error_key_without_status_or_exit_is_unknown (tests.test_receipts.LedgerTest.test_error_key_without_status_or_exit_is_unknown) ... ok
-test_explicit_zero_without_status_is_execution_observed (tests.test_receipts.LedgerTest.test_explicit_zero_without_status_is_execution_observed) ... ok
-test_first_record_links_to_null_and_digest_matches_body (tests.test_receipts.LedgerTest.test_first_record_links_to_null_and_digest_matches_body) ... ok
-test_lifecycle_flags_on_a_tool_call_are_not_copied (tests.test_receipts.LedgerTest.test_lifecycle_flags_on_a_tool_call_are_not_copied) ... ok
-test_missing_lookup_and_hostile_ids (tests.test_receipts.LedgerTest.test_missing_lookup_and_hostile_ids) ... ok
-test_non_string_result_can_still_expose_an_integer_exit (tests.test_receipts.LedgerTest.test_non_string_result_can_still_expose_an_integer_exit) ... ok
-test_recomputed_tail_needs_a_checkpoint_to_be_caught (tests.test_receipts.LedgerTest.test_recomputed_tail_needs_a_checkpoint_to_be_caught) ... ok
-test_second_record_chains_to_the_first (tests.test_receipts.LedgerTest.test_second_record_chains_to_the_first) ... ok
-test_secret_text_is_not_stored (tests.test_receipts.LedgerTest.test_secret_text_is_not_stored) ... ok
-test_tampered_field_breaks_the_chain (tests.test_receipts.LedgerTest.test_tampered_field_breaks_the_chain) ... ok
-test_unsafe_status_text_is_not_stored (tests.test_receipts.LedgerTest.test_unsafe_status_text_is_not_stored) ... ok
-test_register_wires_the_documented_surfaces (tests.test_receipts.RegisterTest.test_register_wires_the_documented_surfaces) ... ok
-test_repeated_ends_are_distinct_and_do_not_invent_flags (tests.test_receipts.SessionEndTest.test_repeated_ends_are_distinct_and_do_not_invent_flags) ... ok
-
 ----------------------------------------------------------------------
-Ran 32 tests in 0.044s
+Ran 38 tests in 0.047s
 
 OK

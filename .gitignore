@@ -4,5 +4,6 @@ __pycache__/
 .pytest_cache/
 *.egg-info/
 .hermes-home/
+.hermes-home-parallel/
 agent-tools/
 uploads/

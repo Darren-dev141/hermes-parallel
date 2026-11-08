@@ -1,0 +1,7 @@
+$ /tmp/hermes-src/.venv/bin/hermes -z Investigate the supplier total, then correct a bad quote.
+exit=0
+--- stdout ---
+The total was rebuilt after the bad quote was withdrawn. This sentence is the mock, not evidence.
+
+--- stderr ---
+

@@ -1,0 +1,13 @@
+name: hermes-parallel
+version: "0.1.0"
+description: >-
+  Auditable fan-out on the receipts ledger. Parallel investigations record
+  proposed, computed, checked, supported, and unknown evidence with causal
+  dependencies. Correcting a value retracts only the conclusions that used it.
+license: MIT
+requires_hermes: ">=0.23.0"
+provides_tools:
+  - parallel_investigate
+  - parallel_retract
+  - parallel_report
+  - parallel_order_check

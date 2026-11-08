@@ -1,0 +1,106 @@
+{
+  "label": "mock-model retraction demo, not a live LLM",
+  "doctor_receipts": 0,
+  "doctor_parallel": 0,
+  "plugins_list": 0,
+  "oneshot_exit": 0,
+  "ledger": true,
+  "evidence": true,
+  "evidence_tail": [
+    {
+      "key": "price_quote",
+      "status": "proposed",
+      "value": null
+    },
+    {
+      "key": "rival_price",
+      "status": "proposed",
+      "value": null
+    },
+    {
+      "key": "quantity",
+      "status": "proposed",
+      "value": null
+    },
+    {
+      "key": "tax_percent",
+      "status": "proposed",
+      "value": null
+    },
+    {
+      "key": "subtotal",
+      "status": "proposed",
+      "value": null
+    },
+    {
+      "key": "total",
+      "status": "proposed",
+      "value": null
+    },
+    {
+      "key": "price_quote",
+      "status": "computed",
+      "value": 40
+    },
+    {
+      "key": "rival_price",
+      "status": "computed",
+      "value": 25
+    },
+    {
+      "key": "quantity",
+      "status": "computed",
+      "value": 10
+    },
+    {
+      "key": "tax_percent",
+      "status": "computed",
+      "value": 10
+    },
+    {
+      "key": "quantity",
+      "status": "independently_checked",
+      "value": 10
+    },
+    {
+      "key": "price_quote",
+      "status": "computed",
+      "value": 40
+    },
+    {
+      "key": "subtotal",
+      "status": "supported",
+      "value": 400
+    },
+    {
+      "key": "total",
+      "status": "supported",
+      "value": 440
+    },
+    {
+      "key": "price_quote",
+      "status": "computed",
+      "value": 25
+    },
+    {
+      "key": "subtotal",
+      "status": "retracted",
+      "value": 400
+    },
+    {
+      "key": "subtotal",
+      "status": "supported",
+      "value": 250
+    },
+    {
+      "key": "total",
+      "status": "retracted",
+      "value": 440
+    },
+    {
+      "key": "total",
+      "status": "supported",
+      "value": 275
+    }
+  ]
+}
