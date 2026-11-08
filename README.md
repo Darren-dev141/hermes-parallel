@@ -168,7 +168,7 @@ Evidence from that run: `artifacts/session/ledger.jsonl`, `artifacts/session/ver
 
 Not done, and not started from this tree:
 
-- No catalog pull request, no public pin, no X post, no Typeform. Those need a separate go-ahead.
+- No catalog pull request, no public repository pin, no X post, no Typeform. Those need a separate go-ahead. The plugin tree to pin, if that decision is made without further code changes, is `e5d84abf09862c44709ba924c0e4adbf2fc00e1c`.
 - `requires_hermes` is the release that was installed and tested, not a search for the oldest release that still loads.
 - There is no external checkpoint store. Passing `checkpoint_digest` works; nothing here copies the tip anywhere trustworthy.
 - Tool Search's default hides the verify tool from the eager list.

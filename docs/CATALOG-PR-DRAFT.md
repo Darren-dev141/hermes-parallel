@@ -12,7 +12,9 @@ Version in `plugin.yaml`: `0.1.0`.
 
 `requires_hermes`: `>=0.23.0`. That is the release this tree was installed and run against (tag `v0.23.0`, commit `2bd378ed1b8d6bf2192cb26e0a55ff3091e6bd19`). It is not a claim that older Hermes releases fail or work.
 
-The catalog `sha` should be the commit that contains this `receipts/` tree, full 40 characters, after the plugin repo is public. This draft does not invent that sha.
+Plugin code pin, full sha, version `0.1.0` tree: `e5d84abf09862c44709ba924c0e4adbf2fc00e1c`.
+
+That commit is the plugin, tests, and the mock-session artifacts. This draft's sha line was added afterward and is not part of the pin. Do not open the catalog PR until the repository is public and someone has decided to enter.
 
 ## What it does
 
@@ -44,5 +46,5 @@ Native `plugin.yaml` and `register(ctx)`. No core overrides.
 ## Checks still required before opening
 
 - A public repository the author controls.
-- The full 40-character sha of the commit that contains the plugin, matching version `0.1.0`.
+- Publish the repository, then use pin `e5d84abf09862c44709ba924c0e4adbf2fc00e1c` (or a later commit if the plugin code changes; bump `version` in the same change).
 - A human decision to enter. This draft is not that decision.
