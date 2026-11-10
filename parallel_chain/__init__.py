@@ -16,7 +16,7 @@ from .observe import session_body, tool_body
 from .schemas import VERIFY_SCHEMA
 from .verify_api import verify_tool
 
-logger = logging.getLogger("receipts")
+logger = logging.getLogger("parallel_chain")
 
 __all__ = ["register"]
 
@@ -25,7 +25,7 @@ def default_ledger_path() -> Path:
     """Profile-scoped data directory Hermes keeps across plugin updates."""
     from plugins.plugin_storage import plugin_data_dir
 
-    return Path(plugin_data_dir("receipts")) / "ledger.jsonl"
+    return Path(plugin_data_dir("parallel-chain")) / "ledger.jsonl"
 
 
 def default_ledger() -> Ledger:
@@ -33,17 +33,17 @@ def default_ledger() -> Ledger:
 
 
 def register(ctx, ledger_factory=None):
-    """Register the verify tool, /receipts, and the two observation hooks."""
+    """Register chain_verify, /chain, and the two observation hooks."""
     factory = ledger_factory or default_ledger
 
-    def receipts_verify(args, **kwargs):
+    def chain_verify(args, **kwargs):
         session_id = kwargs.get("session_id") if isinstance(kwargs.get("session_id"), str) else ""
         try:
             return verify_tool(factory(), args if isinstance(args, dict) else {}, session_id=session_id)
         except Exception:
-            logger.exception("receipts_verify failed")
+            logger.exception("chain_verify failed")
             return (
-                '{"schema":"hermes.receipts.verify.v1","proves_task_success":false,'
+                '{"schema":"hermes.parallel_chain.verify.v1","proves_task_success":false,'
                 '"error":"verify_failed"}'
             )
 
@@ -85,22 +85,22 @@ def register(ctx, ledger_factory=None):
         try:
             return format_receipts(factory(), session_id, raw_args or "")
         except Exception:
-            logger.exception("receipts command failed")
+            logger.exception("chain command failed")
             return (
-                "receipts: could not read the ledger.\n"
+                "chain: could not read the ledger.\n"
                 "proves_task_success: false\n"
             )
 
     ctx.register_tool(
-        name="receipts_verify",
-        toolset="receipts",
+        name="chain_verify",
+        toolset="parallel-chain",
         schema=VERIFY_SCHEMA,
-        handler=receipts_verify,
+        handler=chain_verify,
     )
     ctx.register_hook("post_tool_call", post_tool_call)
     ctx.register_hook("on_session_end", on_session_end)
     ctx.register_command(
-        "receipts",
+        "chain",
         handler=receipts_command,
         description=(
             "Show this session's receipt chain. A lifecycle flag is not proof "

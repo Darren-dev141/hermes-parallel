@@ -1,0 +1,10 @@
+$ /tmp/hermes-src/.venv/bin/hermes plugins doctor /workspace/parallel_chain --ci
+exit=0
+--- stdout ---
+Plugin Doctor: /workspace/parallel_chain
+  manifest: parallel-chain 0.1.0 (standalone)
+  OK: runtime discovery, manifest parsing, import, and registration passed
+  registrations: 1 tool(s), 2 hook(s)
+
+--- stderr ---
+

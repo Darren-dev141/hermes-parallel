@@ -61,7 +61,7 @@ enabled      bundled  1.0.0    web-searxng
 enabled      bundled  1.0.0    web-tavily
 enabled      bundled  1.0.0    web-xai
 enabled      user     0.1.0    hermes-parallel
-enabled      user     0.1.0    receipts
+enabled      user     0.1.0    parallel-chain
 
 --- stderr ---
 

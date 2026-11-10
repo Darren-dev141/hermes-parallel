@@ -99,11 +99,11 @@ def _refuse() -> str:
 
 def _ledger():
     try:
-        import receipts
-        return receipts.default_ledger()
+        import parallel_chain
+        return parallel_chain.default_ledger()
     except ImportError:
         import sys
-        module = sys.modules.get("hermes_plugins.receipts")
+        module = sys.modules.get("hermes_plugins.parallel_chain")
         if module is None or not hasattr(module, "default_ledger"):
             return None
         return module.default_ledger()

@@ -1,7 +1,7 @@
 """Tool schema shown to the model. The description is the contract."""
 
 VERIFY_SCHEMA = {
-    "name": "receipts_verify",
+    "name": "chain_verify",
     "description": (
         "Check this profile's receipts ledger and, optionally, one receipt from "
         "the calling session. Reports three separate facts: whether the records "
@@ -18,7 +18,7 @@ VERIFY_SCHEMA = {
         "properties": {
             "receipt_id": {
                 "type": "string",
-                "description": "32-character lowercase hex id copied from /receipts.",
+                "description": "32-character lowercase hex id copied from /chain.",
             },
             "input_json": {
                 "type": "string",

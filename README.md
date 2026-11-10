@@ -2,7 +2,7 @@
 
 Two Hermes plugins.
 
-**Receipts** writes a local, hash-chained ledger of tool calls and turn-end observations. A receipt shows what Hermes recorded. It does not prove that a task succeeded.
+**parallel-chain** writes a local, hash-chained ledger of tool calls and turn-end observations. The catalog key `receipts` and the command `/receipts` are already used by other plugins, so this ledger's id is `parallel-chain`, its tool is `chain_verify`, and its command is `/chain`. A record shows what Hermes observed. It does not prove that a task succeeded.
 
 **Hermes Parallel** (`hermes-parallel`) is a hackathon slice of auditable fan-out on top of that ledger. `/investigate` runs 2–4 investigations in parallel, records each one with a status and causal dependencies, and anchors the event in the receipts chain. Correcting a bad intermediate value retracts only the conclusions that used it. An order check replays the same evidence in two arrival orders and flags a conclusion that changes only because of timing.
 
@@ -14,7 +14,7 @@ Tested against Hermes Agent **v0.23.0** (`2bd378ed1b8d6bf2192cb26e0a55ff3091e6bd
 
 Each line of `ledger.jsonl` is one observation:
 
-- schema `hermes.receipts.v1` and an opaque 32-hex id
+- schema `hermes.parallel_chain.v1` and an opaque 32-hex id
 - session, task, turn, and tool-call ids when Hermes supplied them
 - UTC observation time (when the hook ran, not a clock inside the tool)
 - tool name
@@ -31,7 +31,7 @@ Raw arguments, raw results, error messages, and user text are not stored. A hash
 | Question | Answer |
 | --- | --- |
 | Was this record edited in place? | Yes, if you still have the file. A changed field breaks the digest. |
-| Does an input or output you supply match what was hashed? | Yes. `receipts_verify` reports that separately from chain integrity and from the recorded status. |
+| Does an input or output you supply match what was hashed? | Yes. `chain_verify` reports that separately from chain integrity and from the recorded status. |
 | Did the tool process exit 0, or did Hermes mark the call failed? | Only when that field was actually present. A missing status stays `unknown`. A missing exit code stays unknown. A JSON `"error"` key is not treated as failure: the terminal tool includes `"error": null` on success. |
 | Did the user's task succeed? | No. `proves_task_success` is always false. `completed: true` on a session-end receipt is a Hermes lifecycle flag. |
 | Is the file the complete history? | No, unless you kept a tip digest outside the ledger and pass it as `checkpoint_digest`. Deleting the tail, or replacing the whole file, still verifies as intact. This is not a signature and not an independent attestation. |
@@ -43,7 +43,7 @@ Claims:
 - `unknown` — there is no decisive signal, or the signals disagree (status `ok` with a non-zero exit is recorded as `failed` with `signal_consistent: false`; status `error` with exit 0 is `unknown`).
 - `session_end_observed` — `on_session_end` ran. It does not grade the turn.
 
-In a normal Hermes v0.23.0 session, `post_tool_call` always receives a status, so a live tool receipt is `execution_observed` or `failed`, not `unknown`. `unknown` is what we store when status is absent or not a recognized token and there is no decisive exit code. Unit tests cover that. The live smoke's `receipts_verify` calls are `execution_observed` with status `ok` and **exit unknown**: Hermes said the dispatch was ok, and the result JSON had no `exit_code`. That is not a task-success flag.
+In a normal Hermes v0.23.0 session, `post_tool_call` always receives a status, so a live tool receipt is `execution_observed` or `failed`, not `unknown`. `unknown` is what we store when status is absent or not a recognized token and there is no decisive exit code. Unit tests cover that. The live smoke's `chain_verify` calls are `execution_observed` with status `ok` and **exit unknown**: Hermes said the dispatch was ok, and the result JSON had no `exit_code`. That is not a task-success flag.
 
 ## Coverage
 
@@ -51,11 +51,11 @@ Hooks, and only the events Hermes emits:
 
 - `post_tool_call` after a dispatched tool returns, including results Hermes marks `error` or `blocked`.
 - `on_session_end` from `agent/turn_finalizer.py` at **each turn finalization**, not at a unique session boundary. The v0.23.0 payload includes `completed`, `failed`, `interrupted`, `turn_exit_reason`, `model`, and `platform`. Omitted fields stay null. A reduced CLI-exit shape is stored the same way.
-- A tool name Hermes rejects before dispatch does not create a receipt. With Tool Search left on its default, plugin tools are deferred behind `tool_search` / `tool_call`, and a direct `receipts_verify` call is rejected as "does not exist" with no ledger line. The smoke turns Tool Search off so the mock can call the tool by name. A real model can either do that or call the tool through the bridge.
+- A tool name Hermes rejects before dispatch does not create a receipt. With Tool Search left on its default, plugin tools are deferred behind `tool_search` / `tool_call`, and a direct `chain_verify` call is rejected as "does not exist" with no ledger line. The smoke turns Tool Search off so the mock can call the tool by name. A real model can either do that or call the tool through the bridge.
 
-`/receipts` reads the calling session only. It fails closed when the host does not pass a session id. It does not accept a session id from the command text, and it does not fall back to some other session's latest receipt. `receipts_verify` uses the same rule for record lookup. Chain status describes the whole file (a tampered line anywhere breaks it) without printing other sessions' tools.
+`/chain` reads the calling session only. It fails closed when the host does not pass a session id. It does not accept a session id from the command text, and it does not fall back to some other session's latest receipt. `chain_verify` uses the same rule for record lookup. Chain status describes the whole file (a tampered line anywhere breaks it) without printing other sessions' tools.
 
-The ledger lives in Hermes's profile-scoped plugin data directory (`plugin_data_dir("receipts") / ledger.jsonl`), not in the plugin install tree. It is append-only, locked across threads and processes, and not deleted by this plugin. Deleting or replacing that file is the user's action, and it is also the hole in an unanchored chain.
+The ledger lives in Hermes's profile-scoped plugin data directory (`plugin_data_dir("parallel-chain") / ledger.jsonl`), not in the plugin install tree. It is append-only, locked across threads and processes, and not deleted by this plugin. Deleting or replacing that file is the user's action, and it is also the hole in an unanchored chain.
 
 ## Hermes Parallel
 
@@ -80,7 +80,7 @@ Enable both plugins. Tool Search hides plugin tools unless it is off or the mode
 ```yaml
 plugins:
   enabled:
-    - receipts
+    - parallel-chain
     - hermes-parallel
 tools:
   tool_search:
@@ -89,7 +89,7 @@ tools:
 
 ```bash
 hermes plugins doctor hermes_parallel --ci
-python3 -m unittest tests.test_receipts tests.test_parallel -v
+python3 -m unittest tests.test_parallel_chain tests.test_parallel -v
 python3 scripts/smoke_parallel.py
 ```
 
@@ -98,15 +98,15 @@ The mock-model transcript is `artifacts/parallel/`. `on_session_end` still fires
 ## Layout
 
 ```
-receipts/           hash-chain plugin
+parallel_chain/     hash-chain plugin (`parallel-chain`, command `/chain`)
 hermes_parallel/    fan-out, retraction, order check
   __init__.py       Hermes register(ctx)
   ledger.py         hash chain
   observe.py        hook payload -> receipt body
-  verify_api.py     receipts_verify
-  command.py        /receipts
+  verify_api.py     chain_verify
+  command.py        /chain
   schemas.py
-tests/test_receipts.py
+tests/test_parallel_chain.py
 scripts/smoke_session.py
 scripts/smoke_parallel.py
 artifacts/          unit-test log, receipts session, retraction demo
@@ -117,7 +117,7 @@ No third-party Python packages. The plugin does not make network calls, spawn sh
 ## Run the tests
 
 ```bash
-python3 -m unittest tests.test_receipts -v
+python3 -m unittest tests.test_parallel_chain -v
 ```
 
 38 tests. The original 32 cover the receipts chain. `tests/test_parallel.py` covers retraction (dependents move, everyone else stays) and order sensitivity (the formula total does not flip when arrival order flips; the first-arriving price does).
@@ -136,9 +136,12 @@ uv sync --python 3.14 --frozen --no-dev
 Point a profile at the plugin. `HERMES_HOME` below is a disposable directory; use your real profile if you want the plugin in an existing one.
 
 ```bash
+git clone https://github.com/Darren-dev141/hermes-parallel.git
+cd hermes-parallel
 export HERMES_HOME="$HOME/.hermes"
 mkdir -p "$HERMES_HOME/plugins"
-ln -s /absolute/path/to/this/repo/receipts "$HERMES_HOME/plugins/receipts"
+ln -s "$PWD/parallel_chain" "$HERMES_HOME/plugins/parallel-chain"
+ln -s "$PWD/hermes_parallel" "$HERMES_HOME/plugins/hermes-parallel"
 ```
 
 In `$HERMES_HOME/config.yaml`:
@@ -146,10 +149,17 @@ In `$HERMES_HOME/config.yaml`:
 ```yaml
 plugins:
   enabled:
-    - receipts
+    - parallel-chain
+    - hermes-parallel
 ```
 
-If Tool Search is on (the default), the model will not see `receipts_verify` in the eager tool list. Either leave it to `tool_search` / `tool_call`, or set:
+Workers are local threads. Only the supplier-total question computes numbers. On Hermes v0.23 the demo needs Tool Search off, or the model will not see `chain_verify` and the parallel tools in the eager list:
+
+Also refresh unit test artifact and commit. Then try github.
+
+Look at .gitignore for artifacts. We want new artifacts committed.
+
+git add and commit then try gh.
 
 ```yaml
 tools:
@@ -160,8 +170,10 @@ tools:
 Check the plugin the way the catalog does:
 
 ```bash
-hermes plugins doctor /absolute/path/to/this/repo/receipts --ci
-hermes plugins validate /absolute/path/to/this/repo/receipts --install-deps
+hermes plugins doctor /absolute/path/to/this/repo/parallel_chain --ci
+hermes plugins validate /absolute/path/to/this/repo/parallel_chain --install-deps
+hermes plugins doctor /absolute/path/to/this/repo/hermes_parallel --ci
+hermes plugins validate /absolute/path/to/this/repo/hermes_parallel --install-deps
 ```
 
 Both passed on v0.23.0. Doctor: discovery, manifest, import, registration, 1 tool, 2 hooks. Validate: manifest, `requires_hermes`, load, declared tools and hooks, security scan **safe**, no core override. Validate also notes the plugin is eligible for `plugins.isolation: host`. Logs from this machine are in `artifacts/session/doctor.log` and `artifacts/session/validate.log`.
@@ -171,13 +183,13 @@ Both passed on v0.23.0. Doctor: discovery, manifest, import, registration, 1 too
 In a Hermes chat session:
 
 ```
-/receipts
-/receipts <32-hex-id>
+/chain
+/chain <32-hex-id>
 ```
 
 `hermes -z` has no slash prompt. The smoke calls the same dispatcher Hermes uses (`hermes_cli.plugin_command_dispatch.invoke_plugin_command`) with the session id from the ledger.
 
-The model calls `receipts_verify` with any of:
+The model calls `chain_verify` with any of:
 
 - `receipt_id` — this session only
 - `input_json` — JSON text of the arguments; hashed in canonical form (sorted keys, UTF-8, no extra whitespace)
@@ -191,15 +203,15 @@ The tool returns JSON. Chain integrity, payload match, and the recorded claim ar
 
 `scripts/smoke_session.py` installs nothing from a paid API. It serves a fixed OpenAI-style chat completion on `127.0.0.1:43117` and runs `hermes -z` twice against it. The script is labeled as a mock. It is not a conversation with a model.
 
-What the second session recorded, and what `/receipts` printed for that session only:
+What the second session recorded, and what `/chain` printed for that session only:
 
 - `terminal` exit 0, status `ok`, claim `execution_observed`
 - `terminal` exit 3, status `error`, claim `failed`
-- `receipts_verify` with the real output: `input_match: true`, `output_match: true`, chain `intact`, `proves_task_success: false`
-- `receipts_verify` with a different output: `output_match: false`, chain still `intact` (the check does not edit the ledger)
+- `chain_verify` with the real output: `input_match: true`, `output_match: true`, chain `intact`, `proves_task_success: false`
+- `chain_verify` with a different output: `output_match: false`, chain still `intact` (the check does not edit the ledger)
 - `session_end_observed` with `completed: true`, `lifecycle_failed: false`, `turn_exit_reason: text_response(finish_reason=stop)`
 
-The file also contains the first session. `/receipts` did not list it. `receipts-zero` and `receipts-nonzero` are not in the ledger.
+The file also contains the first session. `/chain` did not list it. `receipts-zero` and `receipts-nonzero` are not in the ledger.
 
 ```bash
 # after the Hermes venv exists at /tmp/hermes-src/.venv

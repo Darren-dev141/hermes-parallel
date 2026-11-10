@@ -9,7 +9,7 @@ from pathlib import Path
 
 from hermes_parallel.engine import Graph, first_price, formula_total, order_sensitivity, report, run_supplier
 from hermes_parallel.store import EvidenceLog, verify_anchors
-from receipts.ledger import Ledger
+from parallel_chain.ledger import Ledger
 
 
 def _supplier(arrival=None) -> Graph:

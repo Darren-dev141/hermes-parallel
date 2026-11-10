@@ -1,4 +1,4 @@
-"""Session-scoped /receipts text. Reads the ledger and does not write it."""
+"""Session-scoped /chain text. Reads the ledger and does not write it."""
 
 from __future__ import annotations
 
@@ -8,13 +8,13 @@ from .ledger import ID_RE, LedgerCorrupt
 def format_receipts(ledger, session_id: str, raw_args: str = "") -> str:
     if not isinstance(session_id, str) or session_id.strip() == "":
         return (
-            "receipts: host did not supply a session id. "
+            "chain: host did not supply a session id. "
             "Refusing to pick a session.\n"
             "proves_task_success: false\n"
         )
     report = ledger.verify()
     lines = [
-        f"receipts session={session_id}",
+        f"chain session={session_id}",
         "proves_task_success: false",
         f"chain: {report['chain']['status']}",
         "checkpoint: none (deleting the tail or replacing the file is not detectable)",
@@ -26,7 +26,7 @@ def format_receipts(ledger, session_id: str, raw_args: str = "") -> str:
         if ID_RE.fullmatch(args):
             focus = args
         else:
-            lines.append("usage: /receipts [receipt-id]")
+            lines.append("usage: /chain [record-id]")
     try:
         rows = [row for row in ledger.records() if row.get("session_id") == session_id]
     except LedgerCorrupt:

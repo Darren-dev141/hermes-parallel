@@ -16,7 +16,7 @@ import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
-SCHEMA = "hermes.receipts.v1"
+SCHEMA = "hermes.parallel_chain.v1"
 RECORD_KEYS = frozenset(
     {
         "schema",
@@ -167,7 +167,7 @@ def verification_report(chain: dict, *, checkpoint: str | None, supplied: bool) 
     else:
         matches = isinstance(checkpoint, str) and tip is not None and checkpoint == tip
     return {
-        "schema": "hermes.receipts.verify.v1",
+        "schema": "hermes.parallel_chain.verify.v1",
         "proves_task_success": False,
         "independent_attestation": False,
         "tail_deletion_detectable": supplied,

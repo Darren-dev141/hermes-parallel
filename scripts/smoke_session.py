@@ -4,7 +4,7 @@
 This is not a live model conversation. A stdlib HTTP server answers
 OpenAI-style chat completions with a fixed tool sequence. Hermes itself
 discovers the plugin, dispatches tools, and fires post_tool_call and
-on_session_end. After the process exits, this script calls /receipts through
+on_session_end. After the process exits, this script calls /chain through
 Hermes's own slash-command dispatcher, because `hermes -z` has no prompt.
 
 Requires the Hermes v0.23.0 checkout installed at /tmp/hermes-src/.venv
@@ -42,7 +42,7 @@ def _tool_result_count(messages: list) -> int:
 
 
 def _zero_receipt() -> dict | None:
-    path = HOME / "plugin-data" / "receipts" / "ledger.jsonl"
+    path = HOME / "plugin-data" / "parallel-chain" / "ledger.jsonl"
     if not path.exists():
         return None
     for line in path.read_text(encoding="utf-8").splitlines():
@@ -66,7 +66,7 @@ def _completion(messages: list) -> dict:
     if step == 2:
         return _tool_call(
             "call_verify_match",
-            "receipts_verify",
+            "chain_verify",
             {
                 "receipt_id": receipt_id,
                 "output_text": exact_output,
@@ -76,7 +76,7 @@ def _completion(messages: list) -> dict:
     if step == 3:
         return _tool_call(
             "call_verify_mismatch",
-            "receipts_verify",
+            "chain_verify",
             {"receipt_id": receipt_id, "output_text": "not-the-output"},
         )
     return {
@@ -260,9 +260,9 @@ def _write_home() -> None:
     _stop_gateway()
     if HOME.exists():
         shutil.rmtree(HOME)
-    plugin_dir = HOME / "plugins" / "receipts"
+    plugin_dir = HOME / "plugins" / "parallel-chain"
     plugin_dir.parent.mkdir(parents=True)
-    plugin_dir.symlink_to(ROOT / "receipts")
+    plugin_dir.symlink_to(ROOT / "parallel_chain")
     config = textwrap.dedent(
         f"""\
         _config_version: 12
@@ -275,14 +275,14 @@ def _write_home() -> None:
           context_length: 64000
         toolsets:
           - terminal
-          - receipts
+          - parallel-chain
         platform_toolsets:
           cli:
             - hermes-cli
-            - receipts
+            - parallel-chain
         plugins:
           enabled:
-            - receipts
+            - parallel-chain
         memory:
           memory_enabled: false
           user_profile_enabled: false
@@ -294,7 +294,7 @@ def _write_home() -> None:
         agent:
           max_turns: 8
         # Plugin tools are deferred behind tool_search by default. Turn that off
-        # so this deterministic mock can call receipts_verify by name.
+        # so this deterministic mock can call chain_verify by name.
         tools:
           tool_search:
             enabled: "off"
@@ -314,11 +314,11 @@ def _slash(env: dict) -> str:
         from hermes_cli.plugins import get_plugin_commands
 
         home = Path(os.environ["HERMES_HOME"])
-        ledger_path = home / "plugin-data" / "receipts" / "ledger.jsonl"
+        ledger_path = home / "plugin-data" / "parallel-chain" / "ledger.jsonl"
         rows = [json.loads(line) for line in ledger_path.read_text(encoding="utf-8").splitlines() if line.strip()]
         session_ids = [row.get("session_id") for row in rows if isinstance(row.get("session_id"), str)]
         session_id = session_ids[-1] if session_ids else ""
-        handler = get_plugin_commands()["receipts"]["handler"]
+        handler = get_plugin_commands()["chain"]["handler"]
         text = invoke_plugin_command(
             handler, "", session_id=session_id, platform="cli", session_key="smoke", source=None,
         )
@@ -373,11 +373,11 @@ def main() -> int:
     env["OPENAI_API_KEY"] = "local-mock"
 
     # First launch persists plugin toolset keys. A cold gateway resolves tools
-    # before discovery finishes and would omit receipts_verify.
+    # before discovery finishes and would omit chain_verify.
     _run([str(HERMES_BIN), "plugins", "list", "--enabled", "--plain"], env, "plugins-list.log")
-    doctor = _run([str(HERMES_BIN), "plugins", "doctor", str(ROOT / "receipts"), "--ci"], env, "doctor.log")
+    doctor = _run([str(HERMES_BIN), "plugins", "doctor", str(ROOT / "parallel_chain"), "--ci"], env, "doctor.log")
     validate = _run(
-        [str(HERMES_BIN), "plugins", "validate", str(ROOT / "receipts"), "--install-deps"],
+        [str(HERMES_BIN), "plugins", "validate", str(ROOT / "parallel_chain"), "--install-deps"],
         env,
         "validate.log",
     )
@@ -400,7 +400,7 @@ def main() -> int:
     server.shutdown()
     _stop_gateway()
 
-    ledger = HOME / "plugin-data" / "receipts" / "ledger.jsonl"
+    ledger = HOME / "plugin-data" / "parallel-chain" / "ledger.jsonl"
     if ledger.exists():
         shutil.copy(ledger, OUT / "ledger.jsonl")
     else:

@@ -174,7 +174,7 @@ def main() -> int:
         shutil.rmtree(HOME)
     plugins = HOME / "plugins"
     plugins.mkdir(parents=True)
-    (plugins / "receipts").symlink_to(ROOT / "receipts")
+    (plugins / "parallel-chain").symlink_to(ROOT / "parallel_chain")
     (plugins / "hermes-parallel").symlink_to(ROOT / "hermes_parallel")
     (HOME / "config.yaml").write_text(textwrap.dedent(f"""\
         _config_version: 12
@@ -187,12 +187,12 @@ def main() -> int:
           context_length: 64000
         plugins:
           enabled:
-            - receipts
+            - parallel-chain
             - hermes-parallel
         platform_toolsets:
           cli:
             - hermes-cli
-            - receipts
+            - parallel-chain
             - hermes-parallel
         memory:
           memory_enabled: false
@@ -212,7 +212,7 @@ def main() -> int:
     env["HERMES_HOME"] = str(HOME)
     env["OPENAI_API_KEY"] = "local-mock"
     env.pop("OPENROUTER_API_KEY", None)
-    doctor_r = _run([str(HERMES_BIN), "plugins", "doctor", str(ROOT / "receipts"), "--ci"], env, "doctor-receipts.log")
+    doctor_r = _run([str(HERMES_BIN), "plugins", "doctor", str(ROOT / "parallel_chain"), "--ci"], env, "doctor-parallel-chain.log")
     doctor_p = _run([str(HERMES_BIN), "plugins", "doctor", str(ROOT / "hermes_parallel"), "--ci"], env, "doctor-parallel.log")
     listed = _run([str(HERMES_BIN), "plugins", "list", "--enabled", "--plain"], env, "plugins-list.log")
     server = ThreadingHTTPServer(("127.0.0.1", PORT), Handler)
@@ -221,7 +221,7 @@ def main() -> int:
     oneshot = _run([str(HERMES_BIN), "-z", "Investigate the supplier total, then correct a bad quote."], env, "oneshot.log")
     server.shutdown()
     subprocess.run([str(HERMES_BIN), "gateway", "stop"], env=env, capture_output=True)
-    ledger = HOME / "plugin-data" / "receipts" / "ledger.jsonl"
+    ledger = HOME / "plugin-data" / "parallel-chain" / "ledger.jsonl"
     evidence = HOME / "plugin-data" / "hermes-parallel" / "evidence.jsonl"
     if ledger.exists():
         shutil.copy(ledger, OUT / "ledger.jsonl")
@@ -229,7 +229,7 @@ def main() -> int:
         shutil.copy(evidence, OUT / "evidence.jsonl")
     summary = {
         "label": "mock-model retraction demo, not a live LLM",
-        "doctor_receipts": doctor_r,
+        "doctor_parallel_chain": doctor_r,
         "doctor_parallel": doctor_p,
         "plugins_list": listed,
         "oneshot_exit": oneshot,

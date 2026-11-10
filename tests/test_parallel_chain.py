@@ -43,29 +43,29 @@ def _id_factory():
 
 class HashContractTest(unittest.TestCase):
     def test_input_hash_is_canonical_utf8_sha256(self):
-        from receipts.observe import hash_input
+        from parallel_chain.observe import hash_input
 
         args = {"b": 1, "a": [2, {"d": 1, "c": "café"}]}
         self.assertEqual(hash_input(args), _sha256_text(_canonical(args)))
 
     def test_input_key_order_does_not_change_hash(self):
-        from receipts.observe import hash_input
+        from parallel_chain.observe import hash_input
 
         self.assertEqual(hash_input({"b": 1, "a": 2}), hash_input({"a": 2, "b": 1}))
 
     def test_missing_args_stay_unknown(self):
-        from receipts.observe import hash_input
+        from parallel_chain.observe import hash_input
 
         self.assertIsNone(hash_input(None))
 
     def test_unserializable_input_stays_unknown(self):
-        from receipts.observe import hash_input
+        from parallel_chain.observe import hash_input
 
         self.assertIsNone(hash_input({"blob": b"nope"}))
         self.assertIsNone(hash_input({"n": float("nan")}))
 
     def test_output_hash_is_the_raw_string_not_reparsed_json(self):
-        from receipts.observe import hash_output
+        from parallel_chain.observe import hash_output
 
         raw = '{"b":1,"a":2}'
         reordered = '{"a":2,"b":1}'
@@ -73,7 +73,7 @@ class HashContractTest(unittest.TestCase):
         self.assertNotEqual(hash_output(raw), hash_output(reordered))
 
     def test_non_string_output_stays_unknown(self):
-        from receipts.observe import hash_output
+        from parallel_chain.observe import hash_output
 
         self.assertIsNone(hash_output({"exit_code": 0}))
         self.assertIsNone(hash_output(None))
@@ -81,7 +81,7 @@ class HashContractTest(unittest.TestCase):
 
 class ClassifyTest(unittest.TestCase):
     def _claim(self, status, exit_code):
-        from receipts.observe import classify_tool
+        from parallel_chain.observe import classify_tool
 
         return classify_tool(status, exit_code)
 
@@ -112,7 +112,7 @@ class LedgerTest(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.path = Path(self.tmp.name) / "ledger.jsonl"
-        from receipts.ledger import Ledger
+        from parallel_chain.ledger import Ledger
 
         self.ledger = Ledger(self.path, clock=_clock_factory(), id_factory=_id_factory())
 
@@ -120,7 +120,7 @@ class LedgerTest(unittest.TestCase):
         self.tmp.cleanup()
 
     def _tool_body(self, **overrides):
-        from receipts.observe import tool_body
+        from parallel_chain.observe import tool_body
 
         kwargs = {
             "tool_name": "terminal",
@@ -135,7 +135,7 @@ class LedgerTest(unittest.TestCase):
         return tool_body(**kwargs)
 
     def test_first_record_links_to_null_and_digest_matches_body(self):
-        from receipts.ledger import RECORD_KEYS, digest_of
+        from parallel_chain.ledger import RECORD_KEYS, digest_of
 
         record = self.ledger.append(self._tool_body())
         self.assertEqual(record["prev_digest"], None)
@@ -175,7 +175,7 @@ class LedgerTest(unittest.TestCase):
         self.assertEqual(report["chain"]["broken_at"], 1)
 
     def test_recomputed_tail_needs_a_checkpoint_to_be_caught(self):
-        from receipts.ledger import digest_of
+        from parallel_chain.ledger import digest_of
 
         first = self.ledger.append(self._tool_body())
         self.ledger.append(self._tool_body(tool_name="other"))
@@ -203,7 +203,7 @@ class LedgerTest(unittest.TestCase):
         self.assertTrue(report["tail_deletion_detectable"])
 
     def test_corrupt_line_is_unreadable_and_append_refuses(self):
-        from receipts.ledger import LedgerCorrupt
+        from parallel_chain.ledger import LedgerCorrupt
 
         self.ledger.append(self._tool_body())
         with self.path.open("a", encoding="utf-8") as handle:
@@ -292,7 +292,7 @@ class LedgerTest(unittest.TestCase):
         self.assertNotIn("secret-marker-from-other-file", json.dumps(self.ledger.verify()))
 
     def test_concurrent_appends_keep_a_single_intact_chain(self):
-        from receipts.ledger import Ledger
+        from parallel_chain.ledger import Ledger
 
         ledger = Ledger(self.path)
         errors = []
@@ -325,8 +325,8 @@ class LedgerTest(unittest.TestCase):
 
 class SessionEndTest(unittest.TestCase):
     def test_repeated_ends_are_distinct_and_do_not_invent_flags(self):
-        from receipts.ledger import Ledger
-        from receipts.observe import session_body
+        from parallel_chain.ledger import Ledger
+        from parallel_chain.observe import session_body
 
         with tempfile.TemporaryDirectory() as tmp:
             ledger = Ledger(Path(tmp) / "ledger.jsonl", clock=_clock_factory(), id_factory=_id_factory())
@@ -364,10 +364,10 @@ class CommandAndVerifyTest(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.path = Path(self.tmp.name) / "ledger.jsonl"
-        from receipts.ledger import Ledger
+        from parallel_chain.ledger import Ledger
 
         self.ledger = Ledger(self.path, clock=_clock_factory(), id_factory=_id_factory())
-        from receipts.observe import tool_body
+        from parallel_chain.observe import tool_body
 
         self.a = self.ledger.append(
             tool_body(
@@ -394,7 +394,7 @@ class CommandAndVerifyTest(unittest.TestCase):
         self.tmp.cleanup()
 
     def test_slash_without_session_fails_closed(self):
-        from receipts.command import format_receipts
+        from parallel_chain.command import format_receipts
 
         text = format_receipts(self.ledger, "", "")
         self.assertIn("session id", text)
@@ -403,7 +403,7 @@ class CommandAndVerifyTest(unittest.TestCase):
         self.assertNotIn(self.a["id"], text)
 
     def test_slash_lists_only_the_calling_session_and_checks_the_chain(self):
-        from receipts.command import format_receipts
+        from parallel_chain.command import format_receipts
 
         before = self.path.read_bytes()
         text = format_receipts(self.ledger, "sess-a", "")
@@ -420,7 +420,7 @@ class CommandAndVerifyTest(unittest.TestCase):
         self.assertNotIn("other-session", text)
 
     def test_slash_does_not_accept_a_session_override(self):
-        from receipts.command import format_receipts
+        from parallel_chain.command import format_receipts
 
         text = format_receipts(self.ledger, "sess-a", "session sess-b")
         self.assertNotIn("foreign_tool", text)
@@ -428,14 +428,14 @@ class CommandAndVerifyTest(unittest.TestCase):
         self.assertIn("usage:", text)
 
     def test_other_sessions_receipt_is_not_found(self):
-        from receipts.command import format_receipts
+        from parallel_chain.command import format_receipts
 
         text = format_receipts(self.ledger, "sess-a", self.b["id"])
         self.assertIn("not found", text)
         self.assertNotIn("foreign_tool", text)
 
     def test_verify_tool_separates_integrity_payload_and_outcome(self):
-        from receipts.verify_api import verify_tool
+        from parallel_chain.verify_api import verify_tool
 
         raw = json.dumps({"output": "ok-out", "exit_code": 0})
         before = self.path.read_bytes()
@@ -472,7 +472,7 @@ class CommandAndVerifyTest(unittest.TestCase):
         self.assertIsNone(mismatch["record"]["input_match"])
 
     def test_verify_lookup_is_session_scoped_and_rejects_paths(self):
-        from receipts.verify_api import verify_tool
+        from parallel_chain.verify_api import verify_tool
 
         other = json.loads(
             verify_tool(self.ledger, {"receipt_id": self.b["id"]}, session_id="sess-a")
@@ -490,7 +490,7 @@ class CommandAndVerifyTest(unittest.TestCase):
         self.assertNotIn("terminal", json.dumps(no_session))
 
     def test_supplied_digest_mismatch_does_not_rewrite_the_ledger(self):
-        from receipts.verify_api import verify_tool
+        from parallel_chain.verify_api import verify_tool
 
         before = self.path.read_bytes()
         report = json.loads(
@@ -506,7 +506,7 @@ class CommandAndVerifyTest(unittest.TestCase):
 
 class RegisterTest(unittest.TestCase):
     def test_register_wires_the_documented_surfaces(self):
-        from receipts import register
+        from parallel_chain import register
 
         class Ctx:
             def __init__(self):
@@ -528,14 +528,14 @@ class RegisterTest(unittest.TestCase):
             path = Path(tmp) / "ledger.jsonl"
 
             def factory():
-                from receipts.ledger import Ledger
+                from parallel_chain.ledger import Ledger
 
                 return Ledger(path, clock=_clock_factory(), id_factory=_id_factory())
 
             register(ctx, ledger_factory=factory)
-            self.assertEqual([tool["name"] for tool in ctx.tools], ["receipts_verify"])
+            self.assertEqual([tool["name"] for tool in ctx.tools], ["chain_verify"])
             self.assertEqual([name for name, _cb in ctx.hooks], ["post_tool_call", "on_session_end"])
-            self.assertEqual(ctx.commands[0][0], "receipts")
+            self.assertEqual(ctx.commands[0][0], "chain")
             for _name, callback in ctx.hooks:
                 self.assertIn("kwargs", callback.__code__.co_varnames)
             post = dict(ctx.hooks)["post_tool_call"]
@@ -553,7 +553,7 @@ class RegisterTest(unittest.TestCase):
             # A second end with no flags must not invent them, and must not raise.
             end(session_id="sess-a")
             post(tool_name="terminal", args={"command": object()}, result=object(), status=None)
-            from receipts.ledger import Ledger
+            from parallel_chain.ledger import Ledger
 
             rows = Ledger(path).records()
             self.assertEqual([row["kind"] for row in rows], ["tool_call", "session_end", "session_end", "tool_call"])

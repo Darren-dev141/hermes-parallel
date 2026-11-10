@@ -70,11 +70,11 @@ def _read(path: Path) -> list[dict]:
 
 def _observe():
     try:
-        from receipts.observe import hash_input, tool_body
+        from parallel_chain.observe import hash_input, tool_body
         return hash_input, tool_body
     except ImportError:
         import sys
-        module = sys.modules.get("hermes_plugins.receipts.observe")
+        module = sys.modules.get("hermes_plugins.parallel_chain.observe")
         if module is None:
             return None
         return module.hash_input, module.tool_body

@@ -8,7 +8,7 @@ Nothing here has been opened against NousResearch/hermes-agent. No X post and no
 
 Two plugins.
 
-Receipts appends a hash-chained ledger of `post_tool_call` and `on_session_end` observations. `on_session_end` in Hermes v0.23.0 fires at each turn finalization, not only when a chat session ends. `receipts_verify` checks the chain and, separately, an independently supplied input or output. `/receipts` prints the calling session. `proves_task_success` is always false. Missing status stays unknown. A missing exit code stays unknown.
+`parallel-chain` (directory `parallel_chain/`) appends a hash-chained ledger of `post_tool_call` and `on_session_end` observations. The catalog keys `receipts` and `hermes-receipts` are already taken, and `/receipts` is already used, so this ledger's id is `parallel-chain`, its tool is `chain_verify`, and its command is `/chain`. `on_session_end` in Hermes v0.23.0 fires at each turn finalization, not only when a chat session ends. `chain_verify` checks the chain and, separately, an independently supplied input or output. `proves_task_success` is always false. Missing status stays unknown. A missing exit code stays unknown.
 
 Hermes Parallel (`hermes-parallel`, directory `hermes_parallel/`) fans a question out into parallel investigations and records an evidence log on that receipts chain. Each item has a status: proposed, computed, independently_checked, supported, unknown, or retracted, plus the keys it depends on. Correcting a value retracts and recomputes only the dependents. An order check replays two arrival orders and flags a conclusion whose value changes. `/investigate` and `/parallel` are the commands. The supplier-total case is the scripted demo: a supported total of 440 built on a quote of 40, then retracted to 275 when the quote is corrected to 25. Quantity and tax are kept.
 
@@ -16,7 +16,7 @@ Hermes Parallel (`hermes-parallel`, directory `hermes_parallel/`) fans a questio
 
 Native `plugin.yaml` and `register(ctx)`. No core overrides. No `delegate_task` call. v0.23 can fan out with `delegate_task`'s `tasks` array, and a top-level call does not join child model loops in the same turn, so the investigations in this slice are local threads.
 
-Receipts: hooks `post_tool_call`, `on_session_end`; tool `receipts_verify`; command `/receipts`; storage `plugin_data_dir("receipts")/ledger.jsonl`.
+parallel-chain: hooks `post_tool_call`, `on_session_end`; tool `chain_verify`; command `/chain`; storage `plugin_data_dir("parallel-chain")/ledger.jsonl`.
 
 Hermes Parallel: tools `parallel_investigate`, `parallel_retract`, `parallel_report`, `parallel_order_check`; commands `/investigate`, `/parallel`; storage `plugin_data_dir("hermes-parallel")/evidence.jsonl`, with each new event anchored into the receipts ledger.
 

@@ -1,6 +1,6 @@
 {
   "label": "mock-model retraction demo, not a live LLM",
-  "doctor_receipts": 0,
+  "doctor_parallel_chain": 0,
   "doctor_parallel": 0,
   "plugins_list": 0,
   "oneshot_exit": 0,

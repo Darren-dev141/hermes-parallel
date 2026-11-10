@@ -1,4 +1,4 @@
-"""receipts_verify: integrity, payload agreement, and recorded outcome, kept apart."""
+"""chain_verify: integrity, payload agreement, and recorded outcome, kept apart."""
 
 from __future__ import annotations
 
